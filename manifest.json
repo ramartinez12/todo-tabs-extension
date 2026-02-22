@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Tabs To-Do",
+  "version": "0.1",
+  "description": "Save browser tabs as to-do items; mark complete to close the tab.",
+  "permissions": ["tabs", "storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tabs To-Do"
+  }
+}

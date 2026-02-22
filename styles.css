@@ -1,0 +1,109 @@
+    :root {
+        --bg: #f7f7f9;
+        --card: #fff;
+        --accent: #2563eb
+    }
+
+    * {
+        box-sizing: border-box
+    }
+
+    body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+        margin: 0;
+        background: var(--bg);
+        color: #111
+    }
+
+    .container {
+        width: 360px;
+        padding: 12px
+    }
+
+    h1 {
+        font-size: 16px;
+        margin: 0 0 8px
+    }
+
+    .controls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px
+    }
+
+    button {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 8px 10px;
+        border-radius: 6px;
+        cursor: pointer
+    }
+
+    button.secondary {
+        background: #6b7280
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0
+    }
+
+    li.task {
+        background: var(--card);
+        padding: 8px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px
+    }
+
+    .task .title {
+        flex: 1;
+        word-break: break-word
+    }
+
+    .muted {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 8px
+    }
+
+    .fav {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        object-fit: cover
+    }
+
+    .task button {
+        background: transparent;
+        color: var(--accent);
+        border: none;
+        padding: 6px 8px;
+        cursor: pointer
+    }
+
+    .task button.danger {
+        color: #ef4444
+    }
+
+    li.task[draggable=true] {
+        cursor: grab;
+        user-select: none
+    }
+
+    li.task[draggable=true]:active {
+        cursor: grabbing
+    }
+
+    li.task.dragging {
+        opacity: 0.5;
+        border: 2px dashed var(--accent)
+    }
+
+    li.task.drag-over {
+        background-color: #e0e7ff
+    }
