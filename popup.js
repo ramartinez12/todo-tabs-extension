@@ -64,6 +64,29 @@ function render(tasks){
       li.classList.remove('dragging')
       document.querySelectorAll('.task').forEach(el => el.classList.remove('drag-over'))
     })
+    
+    // Clicking a list item should focus the corresponding tab (or open it)
+    li.addEventListener('click', async (e) => {
+      // ignore clicks on the buttons inside the item
+      if (e.target.closest('button')) return
+      // if currently dragging, ignore click
+      if (li.classList.contains('dragging')) return
+      let tasks = await getTasks()
+      const idx = tasks.findIndex(t => t.id === task.id)
+      if (idx === -1) return
+      const t = tasks[idx]
+      if (typeof t.tabId === 'number') {
+        chrome.tabs.update(t.tabId, {active:true}, (updatedTab) => {
+          if (chrome.runtime.lastError || !updatedTab) {
+            chrome.tabs.create({url: t.url})
+          } else {
+            if (updatedTab.windowId) chrome.windows.update(updatedTab.windowId, {focused:true})
+          }
+        })
+      } else {
+        chrome.tabs.create({url: t.url})
+      }
+    })
     const img = document.createElement('img')
     img.className = 'fav'
     img.src = task.favIconUrl || ''
