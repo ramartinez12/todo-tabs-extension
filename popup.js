@@ -65,27 +65,60 @@ function render(tasks){
       document.querySelectorAll('.task').forEach(el => el.classList.remove('drag-over'))
     })
     
-    // Clicking a list item should focus the corresponding tab (or open it)
+    // Clicking a list item should focus the corresponding open tab (prefer existing tab with same URL)
     li.addEventListener('click', async (e) => {
-      // ignore clicks on the buttons inside the item
       if (e.target.closest('button')) return
-      // if currently dragging, ignore click
       if (li.classList.contains('dragging')) return
       let tasks = await getTasks()
       const idx = tasks.findIndex(t => t.id === task.id)
       if (idx === -1) return
       const t = tasks[idx]
-      if (typeof t.tabId === 'number') {
-        chrome.tabs.update(t.tabId, {active:true}, (updatedTab) => {
-          if (chrome.runtime.lastError || !updatedTab) {
-            chrome.tabs.create({url: t.url})
-          } else {
-            if (updatedTab.windowId) chrome.windows.update(updatedTab.windowId, {focused:true})
+
+      function activateTabObject(tab) {
+        chrome.tabs.update(tab.id, {active: true}, () => {
+          if (!chrome.runtime.lastError && tab.windowId) {
+            chrome.windows.update(tab.windowId, {focused: true})
           }
         })
-      } else {
-        chrome.tabs.create({url: t.url})
       }
+
+      // First, try to find any open tab with the same URL
+      chrome.tabs.query({url: t.url}, (matched) => {
+        if (matched && matched.length) {
+          const tab = matched[0]
+          activateTabObject(tab)
+          tasks[idx].tabId = tab.id
+          saveTasks(tasks)
+          return
+        }
+
+        // If none found, try the stored tabId (it may still exist)
+        if (typeof t.tabId === 'number') {
+          chrome.tabs.get(t.tabId, (tab) => {
+            if (!chrome.runtime.lastError && tab) {
+              activateTabObject(tab)
+              tasks[idx].tabId = tab.id
+              saveTasks(tasks)
+            } else {
+              // fallback: open a new tab
+              chrome.tabs.create({url: t.url}, (newTab) => {
+                if (newTab && newTab.id) {
+                  tasks[idx].tabId = newTab.id
+                  saveTasks(tasks)
+                }
+              })
+            }
+          })
+        } else {
+          // No stored tabId — create a new tab
+          chrome.tabs.create({url: t.url}, (newTab) => {
+            if (newTab && newTab.id) {
+              tasks[idx].tabId = newTab.id
+              saveTasks(tasks)
+            }
+          })
+        }
+      })
     })
     const img = document.createElement('img')
     img.className = 'fav'
