@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tabs To-Do",
   "version": "0.1",
-  "description": "Save browser tabs as to-do items; mark complete to close the tab.",
+  "description": "Save browser tabs as to-do items; mark complete to close the tab. with drag and drop capabilities to reorder based on the priority to the user",
   "permissions": ["tabs", "storage"],
   "action": {
     "default_popup": "popup.html",

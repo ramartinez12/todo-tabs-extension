@@ -1,13 +1,20 @@
+//creates a list of open tabs in the current window, allowing the user to save them as "tasks" that can be completed 
+// (closed) or re-opened later. Tasks are stored in local storage and can be reordered via drag-and-drop. 
+// Clicking a task focuses the corresponding tab if it's still open, or opens it if not.
 let draggedTaskId = null
 
+//return the element by ID simple function
 function byId(id){return document.getElementById(id)}
 
+//updating the local storage with the current list of tasks, and then re-rendering the task list in the popup
 async function getTasks(){
   return new Promise(resolve=>{
     chrome.storage.local.get({tasks:[]}, res=>resolve(res.tasks || []))
   })
 }
 
+// saving the updated list of tasks back to local storage after any changes (like completing, 
+// re-opening, deleting, or reordering tasks) and then re-rendering the task list to reflect those changes
 async function saveTasks(tasks){
   return new Promise(resolve=>{
     chrome.storage.local.set({tasks}, ()=>resolve())
